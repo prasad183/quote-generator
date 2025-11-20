@@ -1,0 +1,704 @@
+{
+	"info": {
+		"_postman_id": "quote-generator-api-collection",
+		"name": "Quote Generator API",
+		"description": "Complete API collection for the Quote Generator application",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Authentication",
+			"item": [
+				{
+					"name": "Register User",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"John Doe\",\n  \"username\": \"johndoe\",\n  \"password\": \"password123\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/auth/register",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"auth",
+								"register"
+							]
+						},
+						"description": "Register a new user with name, username, and password. Username must be at least 3 characters and password must be at least 6 characters."
+					},
+					"response": []
+				},
+				{
+					"name": "Login User",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"username\": \"johndoe\",\n  \"password\": \"password123\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/auth/login",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"auth",
+								"login"
+							]
+						},
+						"description": "Login with username and password. Sets an HTTP-only session cookie that expires in 7 days. Use this cookie for subsequent authenticated requests."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Current User",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/api/auth/me",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"auth",
+								"me"
+							]
+						},
+						"description": "Get the current authenticated user information. Requires a valid session cookie from login. Returns 401 if not authenticated."
+					},
+					"response": []
+				},
+				{
+					"name": "Logout User",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/api/auth/logout",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"auth",
+								"logout"
+							]
+						},
+						"description": "Logout the current user and invalidate the session cookie. Requires a valid session cookie."
+					},
+					"response": []
+				}
+			],
+			"description": "Authentication endpoints for user registration, login, session management, and logout"
+		},
+		{
+			"name": "Quotes",
+			"item": [
+				{
+					"name": "Get All Quotes",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/api/quotes?page=1&limit=10",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"quotes"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "1",
+									"description": "Page number (default: 1)"
+								},
+								{
+									"key": "limit",
+									"value": "10",
+									"description": "Items per page (1-100, default: 10)"
+								},
+								{
+									"key": "author",
+									"value": "",
+									"description": "Filter by author (optional)",
+									"disabled": true
+								},
+								{
+									"key": "category",
+									"value": "",
+									"description": "Filter by category (optional)",
+									"disabled": true
+								},
+								{
+									"key": "search",
+									"value": "",
+									"description": "Search in text, author, or category (optional)",
+									"disabled": true
+								}
+							]
+						},
+						"description": "Get all quotes with pagination and optional filtering"
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Quotes - Filtered by Author",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/api/quotes?author=Steve%20Jobs&page=1&limit=10",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"quotes"
+							],
+							"query": [
+								{
+									"key": "author",
+									"value": "Steve Jobs"
+								},
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "limit",
+									"value": "10"
+								}
+							]
+						},
+						"description": "Get quotes filtered by author"
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Quotes - Filtered by Category",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/api/quotes?category=motivation&page=1&limit=10",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"quotes"
+							],
+							"query": [
+								{
+									"key": "category",
+									"value": "motivation"
+								},
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "limit",
+									"value": "10"
+								}
+							]
+						},
+						"description": "Get quotes filtered by category"
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Quotes - With Search",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/api/quotes?search=success&page=1&limit=10",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"quotes"
+							],
+							"query": [
+								{
+									"key": "search",
+									"value": "success"
+								},
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "limit",
+									"value": "10"
+								}
+							]
+						},
+						"description": "Get quotes with search query"
+					},
+					"response": []
+				},
+				{
+					"name": "Add New Quote",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"text\": \"The only way to do great work is to love what you do.\",\n  \"author\": \"Steve Jobs\",\n  \"category\": \"motivation\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/quotes",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"quotes"
+							]
+						},
+						"description": "Add a new quote to the collection. Category is optional and defaults to 'general' if not provided."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Quote by ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/api/quotes/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"quotes",
+								"1"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1",
+									"description": "Quote ID"
+								}
+							]
+						},
+						"description": "Get a specific quote by its ID"
+					},
+					"response": []
+				},
+				{
+					"name": "Search Quotes",
+					"item": [
+						{
+							"name": "Search All Fields",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:3000/api/quotes/search?q=success&page=1&limit=20&field=all",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"quotes",
+										"search"
+									],
+									"query": [
+										{
+											"key": "q",
+											"value": "success",
+											"description": "Search query (required)"
+										},
+										{
+											"key": "page",
+											"value": "1",
+											"description": "Page number (default: 1)"
+										},
+										{
+											"key": "limit",
+											"value": "20",
+											"description": "Items per page (1-100, default: 20)"
+										},
+										{
+											"key": "field",
+											"value": "all",
+											"description": "Search field: 'text', 'author', 'category', or 'all' (default: 'all')"
+										}
+									]
+								},
+								"description": "Search quotes in all fields with relevance scoring"
+							},
+							"response": []
+						},
+						{
+							"name": "Search Text Only",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:3000/api/quotes/search?q=work&field=text&page=1&limit=20",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"quotes",
+										"search"
+									],
+									"query": [
+										{
+											"key": "q",
+											"value": "work"
+										},
+										{
+											"key": "field",
+											"value": "text"
+										},
+										{
+											"key": "page",
+											"value": "1"
+										},
+										{
+											"key": "limit",
+											"value": "20"
+										}
+									]
+								},
+								"description": "Search only in quote text"
+							},
+							"response": []
+						},
+						{
+							"name": "Search Author Only",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:3000/api/quotes/search?q=Jobs&field=author&page=1&limit=20",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"quotes",
+										"search"
+									],
+									"query": [
+										{
+											"key": "q",
+											"value": "Jobs"
+										},
+										{
+											"key": "field",
+											"value": "author"
+										},
+										{
+											"key": "page",
+											"value": "1"
+										},
+										{
+											"key": "limit",
+											"value": "20"
+										}
+									]
+								},
+								"description": "Search only in author names"
+							},
+							"response": []
+						},
+						{
+							"name": "Search Category Only",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:3000/api/quotes/search?q=motivation&field=category&page=1&limit=20",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"quotes",
+										"search"
+									],
+									"query": [
+										{
+											"key": "q",
+											"value": "motivation"
+										},
+										{
+											"key": "field",
+											"value": "category"
+										},
+										{
+											"key": "page",
+											"value": "1"
+										},
+										{
+											"key": "limit",
+											"value": "20"
+										}
+									]
+								},
+								"description": "Search only in categories"
+							},
+							"response": []
+						}
+					],
+					"description": "Advanced search endpoints with field-specific search options"
+				}
+			],
+			"description": "Endpoints for managing quotes collection"
+		},
+		{
+			"name": "Quote",
+			"item": [
+				{
+					"name": "Get Random Quote",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/api/quote",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"quote"
+							]
+						},
+						"description": "Get a random quote from the collection"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Random Quote - Filtered by Author",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/api/quote?author=Steve%20Jobs",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"quote"
+							],
+							"query": [
+								{
+									"key": "author",
+									"value": "Steve Jobs",
+									"description": "Filter by author name"
+								}
+							]
+						},
+						"description": "Get a random quote from a specific author"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Random Quote - Filtered by Category",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/api/quote?category=motivation",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"quote"
+							],
+							"query": [
+								{
+									"key": "category",
+									"value": "motivation",
+									"description": "Filter by category"
+								}
+							]
+						},
+						"description": "Get a random quote from a specific category"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Random Quote - Filtered by Author and Category",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/api/quote?author=Steve%20Jobs&category=motivation",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"quote"
+							],
+							"query": [
+								{
+									"key": "author",
+									"value": "Steve Jobs"
+								},
+								{
+									"key": "category",
+									"value": "motivation"
+								}
+							]
+						},
+						"description": "Get a random quote matching both author and category filters"
+					},
+					"response": []
+				}
+			],
+			"description": "Endpoints for getting random quotes"
+		},
+		{
+			"name": "Authors",
+			"item": [
+				{
+					"name": "Get All Authors",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/api/authors",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"authors"
+							]
+						},
+						"description": "Get all unique authors with their quote counts and categories"
+					},
+					"response": []
+				}
+			],
+			"description": "Endpoints for author information"
+		},
+		{
+			"name": "Statistics",
+			"item": [
+				{
+					"name": "Get App Statistics",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/api/stats",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"stats"
+							]
+						},
+						"description": "Get comprehensive statistics about the quote collection including overview, category breakdown, top authors, and quote lengths"
+					},
+					"response": []
+				}
+			],
+			"description": "Endpoints for application statistics"
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:3000",
+			"type": "string"
+		}
+	]
+}
+
