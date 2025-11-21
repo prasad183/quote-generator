@@ -83,9 +83,18 @@ export async function GET(request) {
         }
       }
       
-      // Exact phrase match bonus
-      const exactPhrase = quote.text.toLowerCase().includes(q.toLowerCase()) ||
-                         quote.author.toLowerCase().includes(q.toLowerCase());
+      // Exact phrase match bonus (only for the selected field)
+      let exactPhrase = false;
+      if (searchField === 'all') {
+        exactPhrase = quote.text.toLowerCase().includes(q.toLowerCase()) ||
+                     quote.author.toLowerCase().includes(q.toLowerCase());
+      } else if (searchField === 'text') {
+        exactPhrase = quote.text.toLowerCase().includes(q.toLowerCase());
+      } else if (searchField === 'author') {
+        exactPhrase = quote.author.toLowerCase().includes(q.toLowerCase());
+      } else if (searchField === 'category') {
+        exactPhrase = quote.category.toLowerCase().includes(q.toLowerCase());
+      }
       if (exactPhrase) {
         score += 2;
       }

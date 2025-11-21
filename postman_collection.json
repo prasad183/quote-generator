@@ -132,7 +132,61 @@
 			"name": "Quotes",
 			"item": [
 				{
-					"name": "Get All Quotes",
+					"name": "Get All Quotes - Basic",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/api/quotes",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"quotes"
+							]
+						},
+						"description": "Get all quotes (basic request without parameters)"
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Quotes - With Pagination",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/api/quotes?page=1&limit=20",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"quotes"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "1",
+									"description": "Page number (default: 1)"
+								},
+								{
+									"key": "limit",
+									"value": "20",
+									"description": "Items per page (1-100, default: 10)"
+								}
+							]
+						},
+						"description": "Get all quotes with pagination (page 1, limit 20)"
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Quotes - With Pagination (limit 10)",
 					"request": {
 						"method": "GET",
 						"header": [],
@@ -258,7 +312,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:3000/api/quotes?search=success&page=1&limit=10",
+							"raw": "http://localhost:3000/api/quotes?search=success",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -272,14 +326,6 @@
 								{
 									"key": "search",
 									"value": "success"
-								},
-								{
-									"key": "page",
-									"value": "1"
-								},
-								{
-									"key": "limit",
-									"value": "10"
 								}
 							]
 						},
@@ -288,26 +334,12 @@
 					"response": []
 				},
 				{
-					"name": "Add New Quote",
+					"name": "Get All Quotes - Combined Filters",
 					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n  \"text\": \"The only way to do great work is to love what you do.\",\n  \"author\": \"Steve Jobs\",\n  \"category\": \"motivation\"\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
+						"method": "GET",
+						"header": [],
 						"url": {
-							"raw": "http://localhost:3000/api/quotes",
+							"raw": "http://localhost:3000/api/quotes?page=1&limit=5&author=Steve%20Jobs&category=motivation",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -316,51 +348,151 @@
 							"path": [
 								"api",
 								"quotes"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "limit",
+									"value": "5"
+								},
+								{
+									"key": "author",
+									"value": "Steve Jobs"
+								},
+								{
+									"key": "category",
+									"value": "motivation"
+								}
 							]
 						},
-						"description": "Add a new quote to the collection. Category is optional and defaults to 'general' if not provided."
+						"description": "Get quotes with combined filters (author, category, pagination)"
 					},
 					"response": []
 				},
 				{
-					"name": "Get Quote by ID",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "http://localhost:3000/api/quotes/1",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "3000",
-							"path": [
-								"api",
-								"quotes",
-								"1"
-							],
-							"variable": [
-								{
-									"key": "id",
-									"value": "1",
-									"description": "Quote ID"
-								}
-							]
+					"name": "Add New Quote",
+					"item": [
+						{
+							"name": "Add New Quote - With All Fields",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"text\": \"The only way to do great work is to love what you do.\",\n  \"author\": \"Steve Jobs\",\n  \"category\": \"motivation\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:3000/api/quotes",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"quotes"
+									]
+								},
+								"description": "Add a new quote with all fields (text, author, category)"
+							},
+							"response": []
 						},
-						"description": "Get a specific quote by its ID"
-					},
-					"response": []
+						{
+							"name": "Add New Quote - Basic",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"text\": \"Your inspiring quote here\",\n  \"author\": \"Author Name\",\n  \"category\": \"motivation\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:3000/api/quotes",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"quotes"
+									]
+								},
+								"description": "Add a new quote (basic example)"
+							},
+							"response": []
+						},
+						{
+							"name": "Add New Quote - Minimal (No Category)",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"text\": \"Life is beautiful\",\n  \"author\": \"Unknown\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:3000/api/quotes",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"quotes"
+									]
+								},
+								"description": "Add a new quote without category (defaults to 'general')"
+							},
+							"response": []
+						}
+					],
+					"description": "Add a new quote to the collection. Category is optional and defaults to 'general' if not provided."
 				},
 				{
 					"name": "Search Quotes",
 					"item": [
 						{
-							"name": "Search All Fields",
+							"name": "Search All Fields - Basic",
 							"request": {
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "http://localhost:3000/api/quotes/search?q=success&page=1&limit=20&field=all",
+									"raw": "http://localhost:3000/api/quotes/search?q=success",
 									"protocol": "http",
 									"host": [
 										"localhost"
@@ -375,6 +507,74 @@
 										{
 											"key": "q",
 											"value": "success",
+											"description": "Search query (required)"
+										}
+									]
+								},
+								"description": "Basic search in all fields"
+							},
+							"response": []
+						},
+						{
+							"name": "Search All Fields - With Pagination",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:3000/api/quotes/search?q=success&page=1&limit=10",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"quotes",
+										"search"
+									],
+									"query": [
+										{
+											"key": "q",
+											"value": "success",
+											"description": "Search query (required)"
+										},
+										{
+											"key": "page",
+											"value": "1",
+											"description": "Page number (default: 1)"
+										},
+										{
+											"key": "limit",
+											"value": "10",
+											"description": "Items per page (1-100, default: 20)"
+										}
+									]
+								},
+								"description": "Search quotes in all fields with pagination"
+							},
+							"response": []
+						},
+						{
+							"name": "Search All Fields - With Field Parameter",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:3000/api/quotes/search?q=inspire&field=all&page=1&limit=20",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"quotes",
+										"search"
+									],
+									"query": [
+										{
+											"key": "q",
+											"value": "inspire",
 											"description": "Search query (required)"
 										},
 										{

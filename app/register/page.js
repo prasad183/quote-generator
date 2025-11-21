@@ -13,6 +13,7 @@ export default function RegisterPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
+  const [registeredUser, setRegisteredUser] = useState(null);
 
   useEffect(() => {
     // Check if already logged in
@@ -22,7 +23,12 @@ export default function RegisterPage() {
           credentials: "include", // Ensure cookies are sent
         });
         if (response.ok) {
-          router.push("/");
+          const data = await response.json();
+          // Handle response: { user: { id, name, username } }
+          if (data.user) {
+            // Already logged in, redirect to home
+            router.push("/");
+          }
         }
       } catch (err) {
         // Not logged in, stay on register page
@@ -86,10 +92,23 @@ export default function RegisterPage() {
       const data = await response.json();
 
       if (response.ok) {
-        setSuccess(true);
-        setTimeout(() => {
-          router.push("/login");
-        }, 1500);
+        // Handle successful registration response
+        // Expected response: { message: "User registered successfully", user: { id, name, username } }
+        if (data.message && data.user) {
+          setRegisteredUser(data.user);
+          setSuccess(true);
+          // Clear form fields
+          setName("");
+          setUsername("");
+          setPassword("");
+          setConfirmPassword("");
+          // Redirect to login after showing success message
+          setTimeout(() => {
+            router.push("/login");
+          }, 2000);
+        } else {
+          setError("Unexpected response format from server");
+        }
       } else {
         setError(data.error || "Registration failed");
       }
@@ -106,56 +125,65 @@ export default function RegisterPage() {
     alignItems: "center",
     justifyContent: "center",
     padding: "20px",
-    background: "linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%)",
+    background: "linear-gradient(135deg, #667eea 0%, #764ba2 25%, #f093fb 50%, #4facfe 75%, #00f2fe 100%)",
     backgroundSize: "400% 400%",
-    animation: "gradientShift 15s ease infinite",
-    fontFamily: "'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+    animation: "gradientShift 20s ease infinite",
+    fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
     position: "relative",
     overflow: "hidden",
   };
 
   const cardStyles = {
     width: "100%",
-    maxWidth: 480,
-    backgroundColor: "rgba(255, 255, 255, 0.95)",
-    borderRadius: 32,
-    padding: "48px",
-    boxShadow: "0 30px 80px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(255, 255, 255, 0.2) inset, 0 0 100px rgba(102, 126, 234, 0.15)",
-    backdropFilter: "blur(30px) saturate(180%)",
-    WebkitBackdropFilter: "blur(30px) saturate(180%)",
-    border: "1px solid rgba(255, 255, 255, 0.4)",
-    transition: "transform 0.3s ease, box-shadow 0.3s ease",
-    animation: "fadeIn 0.6s ease-out",
+    maxWidth: 500,
+    backgroundColor: "rgba(255, 255, 255, 0.98)",
+    borderRadius: "32px",
+    padding: "48px 40px",
+    boxShadow: "0 40px 100px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(255, 255, 255, 0.3) inset, 0 0 150px rgba(102, 126, 234, 0.2)",
+    backdropFilter: "blur(40px) saturate(200%)",
+    WebkitBackdropFilter: "blur(40px) saturate(200%)",
+    border: "2px solid rgba(255, 255, 255, 0.5)",
+    transition: "transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.4s ease",
+    animation: "fadeInUp 0.8s cubic-bezier(0.4, 0, 0.2, 1)",
   };
 
   const inputStyles = {
     width: "100%",
     padding: "16px 20px",
     borderRadius: 16,
-    border: "2px solid rgba(102, 126, 234, 0.2)",
-    fontSize: 15,
-    backgroundColor: "rgba(255, 255, 255, 0.9)",
+    border: "2px solid rgba(102, 126, 234, 0.25)",
+    fontSize: 16,
+    backgroundColor: "rgba(255, 255, 255, 0.95)",
     outline: "none",
-    fontFamily: "'Poppins', sans-serif",
+    fontFamily: "'Inter', sans-serif",
     transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
-    boxShadow: "0 4px 12px rgba(0, 0, 0, 0.05)",
+    boxShadow: "0 4px 16px rgba(0, 0, 0, 0.08), inset 0 1px 2px rgba(255, 255, 255, 0.8)",
+    WebkitAppearance: "none",
+    appearance: "none",
+    color: "#1e293b",
+    fontWeight: 500,
   };
 
   const buttonStyles = {
     width: "100%",
-    padding: "16px 24px",
+    padding: "16px 32px",
     border: "none",
-    fontSize: 16,
+    fontSize: 17,
     borderRadius: 16,
     cursor: "pointer",
-    transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
-    fontWeight: 600,
-    background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+    transition: "all 0.4s cubic-bezier(0.4, 0, 0.2, 1)",
+    fontWeight: 700,
+    background: "linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%)",
+    backgroundSize: "200% 200%",
     color: "white",
-    boxShadow: "0 10px 30px rgba(102, 126, 234, 0.4), 0 0 0 0 rgba(102, 126, 234, 0.5)",
+    boxShadow: "0 12px 40px rgba(102, 126, 234, 0.5), 0 0 0 0 rgba(102, 126, 234, 0.6)",
     fontFamily: "'Poppins', sans-serif",
     position: "relative",
     overflow: "hidden",
+    minHeight: "56px",
+    touchAction: "manipulation",
+    letterSpacing: "0.5px",
+    textTransform: "none",
   };
 
   return (
@@ -166,49 +194,153 @@ export default function RegisterPage() {
           50% { background-position: 100% 50%; }
           100% { background-position: 0% 50%; }
         }
-        @keyframes fadeIn {
-          from { opacity: 0; transform: translateY(20px); }
-          to { opacity: 1; transform: translateY(0); }
+        @keyframes fadeInUp {
+          from { 
+            opacity: 0; 
+            transform: translateY(30px) scale(0.95); 
+          }
+          to { 
+            opacity: 1; 
+            transform: translateY(0) scale(1); 
+          }
+        }
+        .register-card:hover {
+          transform: translateY(-4px);
+          box-shadow: 0 50px 120px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(255, 255, 255, 0.4) inset, 0 0 200px rgba(102, 126, 234, 0.25) !important;
         }
         input:focus {
           border-color: #667eea !important;
-          box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1) !important;
+          box-shadow: 0 0 0 5px rgba(102, 126, 234, 0.15), 0 8px 24px rgba(0, 0, 0, 0.12) !important;
           transform: translateY(-2px);
+          background-color: #ffffff !important;
         }
         button:hover {
-          transform: translateY(-2px);
-          box-shadow: 0 15px 40px rgba(102, 126, 234, 0.5) !important;
+          transform: translateY(-3px) scale(1.02);
+          box-shadow: 0 20px 50px rgba(102, 126, 234, 0.6), 0 0 0 0 rgba(102, 126, 234, 0.7) !important;
+          background-position: 100% 0;
         }
         button:active {
-          transform: translateY(0);
+          transform: translateY(-1px) scale(0.98);
+        }
+        button::before {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: -100%;
+          width: 100%;
+          height: 100%;
+          background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+          transition: left 0.5s;
+        }
+        button:hover::before {
+          left: 100%;
+        }
+        
+        /* Mobile styles (< 640px) */
+        @media (max-width: 639px) {
+          .register-container {
+            padding: 12px !important;
+          }
+          .register-card {
+            padding: 20px !important;
+            border-radius: 20px !important;
+            max-width: 100% !important;
+          }
+          .register-title {
+            font-size: 32px !important;
+            margin-bottom: 8px !important;
+          }
+          .register-subtitle {
+            font-size: 14px !important;
+            margin-bottom: 24px !important;
+          }
+          .register-input {
+            padding: 12px 14px !important;
+            font-size: 16px !important;
+            border-radius: 10px !important;
+          }
+          .register-button {
+            padding: 14px 20px !important;
+            font-size: 15px !important;
+            border-radius: 10px !important;
+          }
+          .register-label {
+            font-size: 13px !important;
+            margin-bottom: 6px !important;
+          }
+        }
+        
+        /* Tablet styles (640px - 1023px) */
+        @media (min-width: 640px) and (max-width: 1023px) {
+          .register-container {
+            padding: 16px !important;
+          }
+          .register-card {
+            padding: 36px !important;
+            border-radius: 28px !important;
+            max-width: 500px !important;
+          }
+          .register-title {
+            font-size: 38px !important;
+          }
+        }
+        
+        /* Laptop styles (1024px - 1439px) */
+        @media (min-width: 1024px) and (max-width: 1439px) {
+          .register-card {
+            padding: 44px !important;
+            max-width: 480px !important;
+          }
+        }
+        
+        /* Desktop styles (>= 1440px) */
+        @media (min-width: 1440px) {
+          .register-card {
+            padding: 48px !important;
+            max-width: 480px !important;
+          }
+        }
+        
+        /* Touch device optimizations */
+        @media (hover: none) and (pointer: coarse) {
+          button, input {
+            min-height: 44px;
+          }
+          button:active {
+            transform: scale(0.98);
+          }
         }
       `}</style>
-      <div style={containerStyles}>
-        <div style={cardStyles}>
+      <div style={containerStyles} className="register-container">
+        <div style={cardStyles} className="register-card">
         <h1
+          className="register-title"
           style={{
-            fontSize: 42,
+            fontSize: 48,
             fontWeight: 800,
-            marginBottom: 12,
+            marginBottom: 16,
             color: "#1a1a2e",
             textAlign: "center",
             fontFamily: "'Playfair Display', serif",
-            background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+            background: "linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%)",
             WebkitBackgroundClip: "text",
             WebkitTextFillColor: "transparent",
             backgroundClip: "text",
-            letterSpacing: "-0.02em",
+            letterSpacing: "-0.03em",
+            lineHeight: 1.2,
           }}
         >
           Create Account
         </h1>
         <p
+          className="register-subtitle"
           style={{
-            fontSize: 16,
+            fontSize: 17,
             color: "#64748b",
             textAlign: "center",
-            marginBottom: 40,
-            fontWeight: 400,
+            marginBottom: 48,
+            fontWeight: 500,
+            fontFamily: "'Inter', sans-serif",
           }}
         >
           Register to access the Quote Generator
@@ -218,6 +350,7 @@ export default function RegisterPage() {
           <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
             <div>
               <label
+                className="register-label"
                 style={{
                   display: "block",
                   fontSize: 14,
@@ -237,12 +370,14 @@ export default function RegisterPage() {
                 }}
                 placeholder="Enter your full name"
                 style={inputStyles}
+                className="register-input"
                 required
               />
             </div>
 
             <div>
               <label
+                className="register-label"
                 style={{
                   display: "block",
                   fontSize: 14,
@@ -262,6 +397,7 @@ export default function RegisterPage() {
                 }}
                 placeholder="Choose a username"
                 style={inputStyles}
+                className="register-input"
                 required
                 minLength={3}
               />
@@ -269,6 +405,7 @@ export default function RegisterPage() {
 
             <div>
               <label
+                className="register-label"
                 style={{
                   display: "block",
                   fontSize: 14,
@@ -288,6 +425,7 @@ export default function RegisterPage() {
                 }}
                 placeholder="Enter password (min 6 characters)"
                 style={inputStyles}
+                className="register-input"
                 required
                 minLength={6}
               />
@@ -295,6 +433,7 @@ export default function RegisterPage() {
 
             <div>
               <label
+                className="register-label"
                 style={{
                   display: "block",
                   fontSize: 14,
@@ -314,6 +453,7 @@ export default function RegisterPage() {
                 }}
                 placeholder="Confirm your password"
                 style={inputStyles}
+                className="register-input"
                 required
                 minLength={6}
               />
@@ -322,34 +462,51 @@ export default function RegisterPage() {
             {error && (
               <div
                 style={{
-                  backgroundColor: "rgba(248, 113, 113, 0.18)",
-                  color: "#b45309",
-                  borderRadius: 12,
-                  padding: "12px 16px",
-                  fontSize: 14,
+                  backgroundColor: "rgba(239, 68, 68, 0.15)",
+                  color: "#dc2626",
+                  borderRadius: 14,
+                  padding: "14px 18px",
+                  fontSize: 15,
+                  fontWeight: 500,
+                  border: "1px solid rgba(239, 68, 68, 0.2)",
+                  fontFamily: "'Inter', sans-serif",
                 }}
               >
                 {error}
               </div>
             )}
 
-            {success && (
+            {success && registeredUser && (
               <div
                 style={{
-                  backgroundColor: "rgba(134, 239, 172, 0.3)",
-                  color: "#166534",
-                  borderRadius: 12,
-                  padding: "12px 16px",
-                  fontSize: 14,
+                  backgroundColor: "rgba(16, 185, 129, 0.15)",
+                  color: "#059669",
+                  borderRadius: 14,
+                  padding: "16px 20px",
+                  fontSize: 15,
+                  fontWeight: 500,
+                  border: "1px solid rgba(16, 185, 129, 0.2)",
+                  fontFamily: "'Inter', sans-serif",
                 }}
               >
-                ✓ Registration successful! Redirecting to login...
+                <div style={{ marginBottom: 8, fontWeight: 600 }}>
+                  ✓ Registration successful!
+                </div>
+                <div style={{ fontSize: 14, opacity: 0.9 }}>
+                  <div>User ID: <strong>{registeredUser.id}</strong></div>
+                  <div>Name: <strong>{registeredUser.name}</strong></div>
+                  <div>Username: <strong>{registeredUser.username}</strong></div>
+                </div>
+                <div style={{ marginTop: 12, fontSize: 13, opacity: 0.8 }}>
+                  Redirecting to login...
+                </div>
               </div>
             )}
 
             <button
               type="submit"
               disabled={loading}
+              className="register-button"
               style={{
                 ...buttonStyles,
                 opacity: loading ? 0.6 : 1,
