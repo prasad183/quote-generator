@@ -1662,7 +1662,7 @@ export default function Home() {
               fontFamily: "'Poppins', sans-serif",
               letterSpacing: "0.01em",
             }}>
-              Discover, save, and share inspiring quotes
+              Discover, Favo, and share inspiring quotes
             </p>
             
             {/* Tab Navigation */}
@@ -1976,7 +1976,7 @@ export default function Home() {
                     color: isFavorite ? "white" : "#0f172a",
                   }}
                 >
-                  {isFavorite ? "✓ Saved" : "⭐ Save"}
+                  {isFavorite ? "✓ Favo" : "⭐ Favo"}
                 </button>
               </div>
 
@@ -3881,7 +3881,7 @@ export default function Home() {
                     fontSize: 16,
                   }}
                 >
-                  No favorites yet. Save quotes from the Home tab to see them here!
+                  No favorites yet. Favo quotes from the Home tab to see them here!
                 </p>
               ) : visibleFavorites.length === 0 ? (
                 <p
