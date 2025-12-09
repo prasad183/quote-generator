@@ -15,7 +15,7 @@ export async function POST(request) {
     }
 
     // Create user
-    const result = createUser(name, username, password);
+    const result = await createUser(name, username, password);
 
     if (result.success) {
       return NextResponse.json(

@@ -1,8 +1,10 @@
 import { NextResponse } from "next/server";
-import { quotes } from "@/lib/quotes";
+import connectDB, { isMongoEnabled } from "@/lib/mongodb";
+import { quotes as staticQuotes } from "@/lib/quotes";
 
 export async function GET(request, { params }) {
   try {
+    await connectDB();
     // Handle params - in Next.js 15+, params might be a Promise
     let idParam;
     if (params instanceof Promise) {
@@ -29,8 +31,34 @@ export async function GET(request, { params }) {
       );
     }
     
-    // Find quote by ID
-    const quote = quotes.find(q => q.id === id);
+    // Check if MongoDB is enabled
+    if (isMongoEnabled()) {
+      try {
+        await connectDB();
+        const Quote = (await import("@/lib/models/Quote")).default;
+        
+        // Find quote by ID in MongoDB
+        const quote = await Quote.findOne({ id }).lean();
+        
+        if (quote) {
+          // Format quote for response
+          const formattedQuote = {
+            id: quote.id,
+            text: quote.text,
+            author: quote.author,
+            category: quote.category,
+            createdAt: quote.createdAt ? new Date(quote.createdAt).toISOString() : new Date().toISOString(),
+          };
+          
+          return NextResponse.json(formattedQuote);
+        }
+      } catch (dbError) {
+        console.warn("Database query failed, using static quotes:", dbError.message);
+      }
+    }
+    
+    // Use static quotes (MongoDB disabled or error)
+    const quote = staticQuotes.find(q => q.id === id);
     
     if (!quote) {
       return NextResponse.json(
@@ -39,7 +67,16 @@ export async function GET(request, { params }) {
       );
     }
     
-    return NextResponse.json(quote);
+    // Format quote for response
+    const formattedQuote = {
+      id: quote.id,
+      text: quote.text,
+      author: quote.author,
+      category: quote.category,
+      createdAt: new Date().toISOString(),
+    };
+    
+    return NextResponse.json(formattedQuote);
   } catch (error) {
     console.error("Error fetching quote by ID:", error);
     return NextResponse.json(

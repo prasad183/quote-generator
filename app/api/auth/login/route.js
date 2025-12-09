@@ -16,7 +16,7 @@ export async function POST(request) {
     }
 
     // Verify user credentials
-    const result = verifyUser(username, password);
+    const result = await verifyUser(username, password);
 
     if (result.success) {
       // Set session cookie

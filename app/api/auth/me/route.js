@@ -18,7 +18,7 @@ export async function GET() {
       const user = JSON.parse(sessionCookie.value);
       
       // Verify user still exists
-      const result = getUserById(user.id);
+      const result = await getUserById(user.id);
       
       if (result.success) {
         return NextResponse.json({ user: result.user }, { status: 200 });

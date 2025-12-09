@@ -3,6 +3,9 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import Button from "@/app/components/ui/Button";
+import Alert from "@/app/components/ui/Alert";
+import InteractiveBackground from "@/app/components/ui/InteractiveBackground";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -12,6 +15,7 @@ export default function LoginPage() {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
   const [loggedInUser, setLoggedInUser] = useState(null);
+  
 
   useEffect(() => {
     // Check if already logged in
@@ -34,6 +38,7 @@ export default function LoginPage() {
     };
     checkAuth();
   }, [router]);
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -102,24 +107,25 @@ export default function LoginPage() {
     alignItems: "center",
     justifyContent: "center",
     padding: "20px",
-    background: "linear-gradient(135deg, #667eea 0%, #764ba2 25%, #f093fb 50%, #4facfe 75%, #00f2fe 100%)",
+    background: "linear-gradient(135deg, #0f172a 0%, #1e293b 25%, #1e1b4b 50%, #312e81 75%, #1e293b 100%)",
     backgroundSize: "400% 400%",
     animation: "gradientShift 20s ease infinite",
     fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
     position: "relative",
     overflow: "hidden",
+    isolation: "isolate", // Create new stacking context
   };
 
   const cardStyles = {
     width: "100%",
     maxWidth: 500,
-    backgroundColor: "rgba(255, 255, 255, 0.98)",
+    backgroundColor: "rgba(15, 23, 42, 0.85)",
     borderRadius: "32px",
     padding: "48px 40px",
-    boxShadow: "0 40px 100px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(255, 255, 255, 0.3) inset, 0 0 150px rgba(102, 126, 234, 0.2)",
+    boxShadow: "0 40px 100px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(99, 102, 241, 0.2) inset, 0 0 150px rgba(99, 102, 241, 0.15)",
     backdropFilter: "blur(40px) saturate(200%)",
     WebkitBackdropFilter: "blur(40px) saturate(200%)",
-    border: "2px solid rgba(255, 255, 255, 0.5)",
+    border: "2px solid rgba(99, 102, 241, 0.3)",
     transition: "transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.4s ease",
     animation: "fadeInUp 0.8s cubic-bezier(0.4, 0, 0.2, 1)",
   };
@@ -128,40 +134,19 @@ export default function LoginPage() {
     width: "100%",
     padding: "16px 20px",
     borderRadius: 16,
-    border: "2px solid rgba(102, 126, 234, 0.25)",
+    border: "2px solid rgba(99, 102, 241, 0.3)",
     fontSize: 16,
-    backgroundColor: "rgba(255, 255, 255, 0.95)",
+    backgroundColor: "rgba(30, 41, 59, 0.8)",
     outline: "none",
     fontFamily: "'Inter', sans-serif",
     transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
-    boxShadow: "0 4px 16px rgba(0, 0, 0, 0.08), inset 0 1px 2px rgba(255, 255, 255, 0.8)",
+    boxShadow: "0 4px 16px rgba(0, 0, 0, 0.3), inset 0 1px 2px rgba(255, 255, 255, 0.05)",
     WebkitAppearance: "none",
     appearance: "none",
-    color: "#1e293b",
+    color: "#f1f5f9",
     fontWeight: 500,
   };
 
-  const buttonStyles = {
-    width: "100%",
-    padding: "16px 32px",
-    border: "none",
-    fontSize: 17,
-    borderRadius: 16,
-    cursor: "pointer",
-    transition: "all 0.4s cubic-bezier(0.4, 0, 0.2, 1)",
-    fontWeight: 700,
-    background: "linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%)",
-    backgroundSize: "200% 200%",
-    color: "white",
-    boxShadow: "0 12px 40px rgba(102, 126, 234, 0.5), 0 0 0 0 rgba(102, 126, 234, 0.6)",
-    fontFamily: "'Poppins', sans-serif",
-    position: "relative",
-    overflow: "hidden",
-    minHeight: "56px",
-    touchAction: "manipulation",
-    letterSpacing: "0.5px",
-    textTransform: "none",
-  };
 
   return (
     <>
@@ -170,6 +155,24 @@ export default function LoginPage() {
           0% { background-position: 0% 50%; }
           50% { background-position: 100% 50%; }
           100% { background-position: 0% 50%; }
+        }
+        @keyframes float {
+          0%, 100% { transform: translateY(0px) translateX(0px); }
+          33% { transform: translateY(-20px) translateX(10px); }
+          66% { transform: translateY(10px) translateX(-10px); }
+        }
+        .login-container::before {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background: radial-gradient(circle at 20% 30%, rgba(99, 102, 241, 0.15) 0%, transparent 50%),
+                      radial-gradient(circle at 80% 70%, rgba(139, 92, 246, 0.15) 0%, transparent 50%),
+                      radial-gradient(circle at 50% 50%, rgba(167, 139, 250, 0.1) 0%, transparent 70%);
+          animation: float 20s ease-in-out infinite;
+          pointer-events: none;
         }
         @keyframes fadeInUp {
           from { 
@@ -187,17 +190,24 @@ export default function LoginPage() {
         }
         .login-card:hover {
           transform: translateY(-4px);
-          box-shadow: 0 50px 120px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(255, 255, 255, 0.4) inset, 0 0 200px rgba(102, 126, 234, 0.25) !important;
+          box-shadow: 0 50px 120px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(99, 102, 241, 0.4) inset, 0 0 200px rgba(99, 102, 241, 0.25) !important;
+        }
+        input::placeholder {
+          color: #64748b !important;
+          opacity: 0.7;
         }
         input:focus {
-          border-color: #667eea !important;
-          box-shadow: 0 0 0 5px rgba(102, 126, 234, 0.15), 0 8px 24px rgba(0, 0, 0, 0.12) !important;
+          border-color: #6366f1 !important;
+          box-shadow: 0 0 0 5px rgba(99, 102, 241, 0.2), 0 8px 24px rgba(0, 0, 0, 0.4) !important;
           transform: translateY(-2px);
-          background-color: #ffffff !important;
+          background-color: rgba(30, 41, 59, 0.95) !important;
+        }
+        input:focus::placeholder {
+          opacity: 0.5;
         }
         button:hover {
           transform: translateY(-3px) scale(1.02);
-          box-shadow: 0 20px 50px rgba(102, 126, 234, 0.6), 0 0 0 0 rgba(102, 126, 234, 0.7) !important;
+          box-shadow: 0 20px 50px rgba(99, 102, 241, 0.6), 0 0 0 0 rgba(99, 102, 241, 0.7) !important;
           background-position: 100% 0;
         }
         button:active {
@@ -238,11 +248,6 @@ export default function LoginPage() {
           .login-input {
             padding: 12px 14px !important;
             font-size: 16px !important;
-            border-radius: 10px !important;
-          }
-          .login-button {
-            padding: 14px 20px !important;
-            font-size: 15px !important;
             border-radius: 10px !important;
           }
           .login-label {
@@ -293,17 +298,23 @@ export default function LoginPage() {
         }
       `}</style>
       <div style={containerStyles} className="login-container">
-        <div style={cardStyles} className="login-card">
+        {/* Interactive mouse-following particle background */}
+        <InteractiveBackground
+          particleCount={50}
+          intensity="normal"
+          zIndex={0}
+        />
+        <div style={{ ...cardStyles, position: "relative", zIndex: 1 }} className="login-card">
         <h1
           className="login-title"
           style={{
             fontSize: 48,
             fontWeight: 800,
             marginBottom: 16,
-            color: "#1a1a2e",
+            color: "#f1f5f9",
             textAlign: "center",
             fontFamily: "'Playfair Display', serif",
-            background: "linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%)",
+            background: "linear-gradient(135deg, #818cf8 0%, #a78bfa 50%, #f472b6 100%)",
             WebkitBackgroundClip: "text",
             WebkitTextFillColor: "transparent",
             backgroundClip: "text",
@@ -317,7 +328,7 @@ export default function LoginPage() {
           className="login-subtitle"
           style={{
             fontSize: 17,
-            color: "#64748b",
+            color: "#94a3b8",
             textAlign: "center",
             marginBottom: 48,
             fontWeight: 500,
@@ -336,7 +347,7 @@ export default function LoginPage() {
                   display: "block",
                   fontSize: 14,
                   fontWeight: 600,
-                  color: "#000000",
+                  color: "#e2e8f0",
                   marginBottom: 8,
                 }}
               >
@@ -364,7 +375,7 @@ export default function LoginPage() {
                   display: "block",
                   fontSize: 14,
                   fontWeight: 600,
-                  color: "#000000",
+                  color: "#e2e8f0",
                   marginBottom: 8,
                 }}
               >
@@ -385,35 +396,11 @@ export default function LoginPage() {
             </div>
 
             {error && (
-              <div
-                style={{
-                  backgroundColor: "rgba(239, 68, 68, 0.15)",
-                  color: "#dc2626",
-                  borderRadius: 14,
-                  padding: "14px 18px",
-                  fontSize: 15,
-                  fontWeight: 500,
-                  border: "1px solid rgba(239, 68, 68, 0.2)",
-                  fontFamily: "'Inter', sans-serif",
-                }}
-              >
-                {error}
-              </div>
+              <Alert type="error" message={error} />
             )}
 
             {success && loggedInUser && (
-              <div
-                style={{
-                  backgroundColor: "rgba(16, 185, 129, 0.15)",
-                  color: "#059669",
-                  borderRadius: 14,
-                  padding: "16px 20px",
-                  fontSize: 15,
-                  fontWeight: 500,
-                  border: "1px solid rgba(16, 185, 129, 0.2)",
-                  fontFamily: "'Inter', sans-serif",
-                }}
-              >
+              <Alert type="success">
                 <div style={{ marginBottom: 8, fontWeight: 600 }}>
                   ✓ Login successful!
                 </div>
@@ -424,28 +411,26 @@ export default function LoginPage() {
                 <div style={{ marginTop: 12, fontSize: 13, opacity: 0.8 }}>
                   Redirecting to dashboard...
                 </div>
-              </div>
+              </Alert>
             )}
 
-            <button
+            <Button
               type="submit"
-              disabled={loading || success}
-              className="login-button"
-              style={{
-                ...buttonStyles,
-                opacity: loading || success ? 0.6 : 1,
-                cursor: loading || success ? "not-allowed" : "pointer",
-              }}
+              variant="primary"
+              disabled={success}
+              loading={loading}
+              fullWidth
+              loadingText="Logging in..."
             >
-              {loading ? "Logging in..." : success ? "Login Successful!" : "Login"}
-            </button>
+              {success ? "Login Successful!" : "Login"}
+            </Button>
           </div>
         </form>
 
         <p
           style={{
             fontSize: 14,
-            color: "#64748b",
+            color: "#94a3b8",
             textAlign: "center",
             marginTop: 24,
           }}
@@ -454,7 +439,7 @@ export default function LoginPage() {
           <Link
             href="/register"
             style={{
-              color: "#11998e",
+              color: "#818cf8",
               fontWeight: 600,
               textDecoration: "none",
             }}

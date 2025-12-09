@@ -1,22 +1,68 @@
-# Authentication API - cURL Commands for Localhost
+# 🔐 Authentication API Documentation
 
-This document contains ready-to-use cURL commands for testing all authentication endpoints on `localhost:3000`.
+<div align="center">
 
-## Prerequisites
+**Complete Guide to Authentication Endpoints**
 
-Make sure your Next.js development server is running:
+*Ready-to-use API commands for seamless integration*
+
+[![API Status](https://img.shields.io/badge/API-Ready-success)](http://localhost:3000)
+[![Documentation](https://img.shields.io/badge/Docs-Complete-blue)](.)
+[![License](https://img.shields.io/badge/License-MIT-green)](.)
+
+</div>
+
+---
+
+## 📋 Table of Contents
+
+- [🚀 Quick Start](#-quick-start)
+- [✨ API Endpoints](#-api-endpoints)
+- [📖 Detailed Examples](#-detailed-examples)
+- [🔄 Complete Test Flow](#-complete-test-flow)
+- [💻 Windows PowerShell](#-windows-powershell-commands)
+- [🧪 Testing Scenarios](#-testing-scenarios)
+- [📊 Quick Reference](#-quick-reference)
+- [🔧 Troubleshooting](#-troubleshooting)
+
+---
+
+## 🚀 Quick Start
+
+### Prerequisites
+
+✅ **Ensure your Next.js development server is running:**
+
 ```bash
 npm run dev
 ```
 
-The server should be accessible at `http://localhost:3000`
+🌐 **Server URL:** `http://localhost:3000`
+
+> 💡 **Tip:** Keep this terminal open while testing the API endpoints.
 
 ---
 
-## 1. Register a New User
+## ✨ API Endpoints
+
+| Endpoint | Method | Description | Authentication |
+|:---------|:-------|:------------|:---------------|
+| `/api/auth/register` | `POST` | Create a new user account | ❌ Not Required |
+| `/api/auth/login` | `POST` | Authenticate and create session | ❌ Not Required |
+| `/api/auth/me` | `GET` | Get current user information | ✅ Required |
+| `/api/auth/logout` | `POST` | End current session | ✅ Required |
+
+---
+
+## 📖 Detailed Examples
+
+### 1️⃣ Register a New User
 
 **Endpoint:** `POST /api/auth/register`
 
+**Purpose:** Create a new user account in the system.
+
+**Request:**
 ```bash
 curl -X POST http://localhost:3000/api/auth/register \
   -H "Content-Type: application/json" \
@@ -27,7 +73,7 @@ curl -X POST http://localhost:3000/api/auth/register \
   }'
 ```
 
-**Expected Response (201):**
+**✅ Success Response (201):**
 ```json
 {
   "message": "User registered successfully",
@@ -39,7 +85,7 @@ curl -X POST http://localhost:3000/api/auth/register \
 }
 ```
 
-**Error Response (400):**
+**❌ Error Response (400):**
 ```json
 {
   "error": "Username already exists"
@@ -48,10 +94,13 @@ curl -X POST http://localhost:3000/api/auth/register \
 
 ---
 
-## 2. Login User
+### 2️⃣ Login User
 
 **Endpoint:** `POST /api/auth/login`
 
+**Purpose:** Authenticate user credentials and establish a session.
+
+**Request:**
 ```bash
 curl -X POST http://localhost:3000/api/auth/login \
   -H "Content-Type: application/json" \
@@ -62,9 +111,9 @@ curl -X POST http://localhost:3000/api/auth/login \
   }'
 ```
 
-**Note:** The `-c cookies.txt` flag saves the session cookie to a file for subsequent requests.
+> 📝 **Important:** The `-c cookies.txt` flag saves the session cookie for authenticated requests.
 
-**Expected Response (200):**
+**✅ Success Response (200):**
 ```json
 {
   "message": "Login successful",
@@ -76,7 +125,7 @@ curl -X POST http://localhost:3000/api/auth/login \
 }
 ```
 
-**Error Response (401):**
+**❌ Error Response (401):**
 ```json
 {
   "error": "Invalid username or password"
@@ -85,18 +134,21 @@ curl -X POST http://localhost:3000/api/auth/login \
 
 ---
 
-## 3. Check Current Session / Get User Info
+### 3️⃣ Get Current User Info
 
 **Endpoint:** `GET /api/auth/me`
 
+**Purpose:** Retrieve information about the currently authenticated user.
+
+**Request:**
 ```bash
 curl http://localhost:3000/api/auth/me \
   -b cookies.txt
 ```
 
-**Note:** The `-b cookies.txt` flag sends the saved cookie with the request.
+> 📝 **Note:** The `-b cookies.txt` flag sends the saved authentication cookie.
 
-**Expected Response (200):**
+**✅ Success Response (200):**
 ```json
 {
   "user": {
@@ -107,7 +159,7 @@ curl http://localhost:3000/api/auth/me \
 }
 ```
 
-**Error Response (401):**
+**❌ Error Response (401):**
 ```json
 {
   "error": "Not authenticated"
@@ -116,17 +168,20 @@ curl http://localhost:3000/api/auth/me \
 
 ---
 
-## 4. Logout User
+### 4️⃣ Logout User
 
 **Endpoint:** `POST /api/auth/logout`
 
+**Purpose:** End the current user session.
+
+**Request:**
 ```bash
 curl -X POST http://localhost:3000/api/auth/logout \
   -b cookies.txt \
   -c cookies.txt
 ```
 
-**Expected Response (200):**
+**✅ Success Response (200):**
 ```json
 {
   "message": "Logout successful"
@@ -135,18 +190,24 @@ curl -X POST http://localhost:3000/api/auth/logout \
 
 ---
 
-## Complete Test Flow
+## 🔄 Complete Test Flow
 
-Here's a complete sequence to test the entire authentication flow:
+Follow this step-by-step guide to test the entire authentication flow:
 
-### Step 1: Register a new user
+### Step 1: Register a New User 👤
+
 ```bash
 curl -X POST http://localhost:3000/api/auth/register \
   -H "Content-Type: application/json" \
   -d '{"name":"Test User","username":"testuser","password":"test123"}'
 ```
 
-### Step 2: Login with the registered user
+**Expected:** `201 Created` with user details
+
+---
+
+### Step 2: Login with Credentials 🔑
+
 ```bash
 curl -X POST http://localhost:3000/api/auth/login \
   -H "Content-Type: application/json" \
@@ -154,31 +215,48 @@ curl -X POST http://localhost:3000/api/auth/login \
   -d '{"username":"testuser","password":"test123"}'
 ```
 
-### Step 3: Check if session is valid
+**Expected:** `200 OK` with user details and cookie saved
+
+---
+
+### Step 3: Verify Session ✅
+
 ```bash
 curl http://localhost:3000/api/auth/me \
   -b cookies.txt
 ```
 
-### Step 4: Logout
+**Expected:** `200 OK` with authenticated user information
+
+---
+
+### Step 4: Logout 🚪
+
 ```bash
 curl -X POST http://localhost:3000/api/auth/logout \
   -b cookies.txt
 ```
 
-### Step 5: Verify logout (should fail)
+**Expected:** `200 OK` with logout confirmation
+
+---
+
+### Step 5: Verify Logout (Should Fail) ❌
+
 ```bash
 curl http://localhost:3000/api/auth/me \
   -b cookies.txt
 ```
 
+**Expected:** `401 Unauthorized` - Session is invalid
+
 ---
 
-## Windows PowerShell Commands
+## 💻 Windows PowerShell Commands
 
-If you're using Windows PowerShell, use these commands instead:
+For Windows users, use these PowerShell-compatible commands:
 
-### Register
+### Register User
 ```powershell
 curl.exe -X POST http://localhost:3000/api/auth/register `
   -H "Content-Type: application/json" `
@@ -205,9 +283,11 @@ curl.exe -X POST http://localhost:3000/api/auth/logout -b cookies.txt
 
 ---
 
-## Testing with Invalid Credentials
+## 🧪 Testing Scenarios
 
-### Test with wrong password:
+### Test Invalid Credentials
+
+**Wrong Password:**
 ```bash
 curl -X POST http://localhost:3000/api/auth/login \
   -H "Content-Type: application/json" \
@@ -217,7 +297,13 @@ curl -X POST http://localhost:3000/api/auth/login \
   }'
 ```
 
-### Test with missing fields:
+**Expected:** `401 Unauthorized`
+
+---
+
+### Test Missing Fields
+
+**Missing Password:**
 ```bash
 curl -X POST http://localhost:3000/api/auth/login \
   -H "Content-Type: application/json" \
@@ -226,11 +312,13 @@ curl -X POST http://localhost:3000/api/auth/login \
   }'
 ```
 
+**Expected:** `400 Bad Request`
+
 ---
 
-## Testing Registration Validation
+### Test Registration Validation
 
-### Test with duplicate username:
+**Duplicate Username:**
 ```bash
 curl -X POST http://localhost:3000/api/auth/register \
   -H "Content-Type: application/json" \
@@ -241,7 +329,11 @@ curl -X POST http://localhost:3000/api/auth/register \
   }'
 ```
 
-### Test with short password:
+**Expected:** `400 Bad Request` - Username already exists
+
+---
+
+**Short Password:**
 ```bash
 curl -X POST http://localhost:3000/api/auth/register \
   -H "Content-Type: application/json" \
@@ -252,31 +344,55 @@ curl -X POST http://localhost:3000/api/auth/register \
   }'
 ```
 
----
-
-## Quick Reference
-
-| Endpoint | Method | Purpose | Cookie Required |
-|----------|--------|---------|----------------|
-| `/api/auth/register` | POST | Register new user | No |
-| `/api/auth/login` | POST | Login user | No (sets cookie) |
-| `/api/auth/me` | GET | Check session | Yes |
-| `/api/auth/logout` | POST | Logout user | Yes |
+**Expected:** `400 Bad Request` - Password validation error
 
 ---
 
-## Troubleshooting
+## 📊 Quick Reference
 
-1. **Connection Refused**: Make sure the Next.js server is running on port 3000
-2. **401 Unauthorized**: Make sure you're sending the cookie with `-b cookies.txt`
-3. **Cookie Not Saved**: Check that `cookies.txt` file is created after login
-4. **CORS Issues**: These shouldn't occur with same-origin requests, but ensure you're using `localhost:3000`
+### Request Headers
+
+All POST requests require:
+```
+Content-Type: application/json
+```
+
+### Cookie Management
+
+- **Save cookie:** Use `-c cookies.txt` flag
+- **Send cookie:** Use `-b cookies.txt` flag
+- **Cookie file:** Created automatically after login
+
+### Response Status Codes
+
+| Code | Meaning | Description |
+|:-----|:--------|:------------|
+| `200` | ✅ Success | Request completed successfully |
+| `201` | ✅ Created | Resource created successfully |
+| `400` | ❌ Bad Request | Invalid input or validation error |
+| `401` | ❌ Unauthorized | Authentication required or failed |
+| `500` | ❌ Server Error | Internal server error |
 
 ---
 
-## Example Output
+## 🔧 Troubleshooting
 
-### Successful Login:
+### Common Issues and Solutions
+
+| Issue | Solution |
+|:------|:---------|
+| 🔴 **Connection Refused** | Ensure Next.js server is running: `npm run dev` |
+| 🔴 **401 Unauthorized** | Include cookie with `-b cookies.txt` flag |
+| 🔴 **Cookie Not Saved** | Verify `cookies.txt` file exists after login |
+| 🔴 **CORS Issues** | Use `localhost:3000` for same-origin requests |
+| 🔴 **JSON Parse Error** | Ensure proper JSON formatting in request body |
+
+---
+
+## 📝 Example Output
+
+### Successful Login Response
+
 ```bash
 $ curl -X POST http://localhost:3000/api/auth/login \
   -H "Content-Type: application/json" \
@@ -286,10 +402,30 @@ $ curl -X POST http://localhost:3000/api/auth/login \
 {"message":"Login successful","user":{"id":1,"name":"John Doe","username":"johndoe"}}
 ```
 
-### Check Session:
+### Successful Session Check
+
 ```bash
 $ curl http://localhost:3000/api/auth/me -b cookies.txt
 
 {"user":{"id":1,"name":"John Doe","username":"johndoe"}}
 ```
 
+---
+
+## 📞 Support
+
+For additional help or questions:
+
+- 📧 Check the main API documentation
+- 🐛 Report issues in the project repository
+- 💬 Contact the development team
+
+---
+
+<div align="center">
+
+**Made with ❤️ for seamless API integration**
+
+*Last Updated: 2024*
+
+</div>

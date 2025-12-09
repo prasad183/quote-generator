@@ -1,8 +1,10 @@
 import { NextResponse } from "next/server";
-import { quotes } from "@/lib/quotes";
+import connectDB, { isMongoEnabled } from "@/lib/mongodb";
+import { quotes as staticQuotes } from "@/lib/quotes";
 
 export async function GET(request) {
   try {
+    await connectDB();
     const { searchParams } = new URL(request.url);
     
     // Get search query (required)
@@ -42,81 +44,119 @@ export async function GET(request) {
     
     // Prepare search terms (split by space for multiple terms)
     const searchTerms = q.toLowerCase().trim().split(/\s+/).filter(term => term.length > 0);
+    const searchRegex = new RegExp(searchTerms.join('|'), 'i');
     
-    // Perform search with relevance scoring
-    const searchResults = quotes.map(quote => {
-      let score = 0;
-      let matches = {
-        text: false,
-        author: false,
-        category: false,
-      };
-      
-      // Search in specified field(s)
-      if (searchField === 'all' || searchField === 'text') {
-        const textMatch = searchTerms.some(term => 
-          quote.text.toLowerCase().includes(term)
-        );
-        if (textMatch) {
-          matches.text = true;
-          score += 3; // Higher weight for text matches
+    // Check if MongoDB is enabled
+    if (isMongoEnabled()) {
+      try {
+        await connectDB();
+        const Quote = (await import("@/lib/models/Quote")).default;
+        
+        // Build MongoDB query based on field
+        const query = {};
+        if (searchField === 'all') {
+          query.$or = [
+            { text: { $regex: searchRegex } },
+            { author: { $regex: searchRegex } },
+            { category: { $regex: searchRegex } },
+          ];
+        } else if (searchField === 'text') {
+          query.text = { $regex: searchRegex };
+        } else if (searchField === 'author') {
+          query.author = { $regex: searchRegex };
+        } else if (searchField === 'category') {
+          query.category = { $regex: searchRegex };
         }
+        
+        // Get total count for pagination
+        const total = await Quote.countDocuments(query);
+        const totalPages = Math.ceil(total / limit);
+        const skip = (page - 1) * limit;
+        
+        // Fetch quotes with pagination
+        const quotes = await Quote.find(query)
+          .sort({ id: 1 })
+          .skip(skip)
+          .limit(limit)
+          .lean();
+        
+        // Format results
+        const formattedResults = quotes.map(quote => ({
+          id: quote.id,
+          text: quote.text,
+          author: quote.author,
+          category: quote.category,
+          createdAt: quote.createdAt ? new Date(quote.createdAt).toISOString() : new Date().toISOString(),
+        }));
+        
+        return NextResponse.json({
+          query: q,
+          field: searchField,
+          results: formattedResults,
+          count: total,
+          pagination: {
+            page,
+            limit,
+            total,
+            totalPages,
+            hasNextPage: page < totalPages,
+            hasPreviousPage: page > 1,
+          },
+          searchInfo: {
+            terms: searchTerms,
+            totalMatches: total,
+          },
+        });
+      } catch (dbError) {
+        console.warn("Database query failed, using static quotes:", dbError.message);
       }
-      
-      if (searchField === 'all' || searchField === 'author') {
-        const authorMatch = searchTerms.some(term => 
-          quote.author.toLowerCase().includes(term)
-        );
-        if (authorMatch) {
-          matches.author = true;
-          score += 2; // Medium weight for author matches
-        }
-      }
-      
-      if (searchField === 'all' || searchField === 'category') {
-        const categoryMatch = searchTerms.some(term => 
+    }
+    
+    // Use static quotes (MongoDB disabled or error)
+    let filteredQuotes = [...staticQuotes];
+    
+    // Filter based on search field
+    if (searchField === 'all') {
+      filteredQuotes = filteredQuotes.filter(quote =>
+        searchTerms.some(term =>
+          quote.text.toLowerCase().includes(term) ||
+          quote.author.toLowerCase().includes(term) ||
           quote.category.toLowerCase().includes(term)
-        );
-        if (categoryMatch) {
-          matches.category = true;
-          score += 1; // Lower weight for category matches
-        }
-      }
-      
-      // Exact phrase match bonus (only for the selected field)
-      let exactPhrase = false;
-      if (searchField === 'all') {
-        exactPhrase = quote.text.toLowerCase().includes(q.toLowerCase()) ||
-                     quote.author.toLowerCase().includes(q.toLowerCase());
-      } else if (searchField === 'text') {
-        exactPhrase = quote.text.toLowerCase().includes(q.toLowerCase());
-      } else if (searchField === 'author') {
-        exactPhrase = quote.author.toLowerCase().includes(q.toLowerCase());
-      } else if (searchField === 'category') {
-        exactPhrase = quote.category.toLowerCase().includes(q.toLowerCase());
-      }
-      if (exactPhrase) {
-        score += 2;
-      }
-      
-      return {
-        quote,
-        score,
-        matches,
-      };
-    })
-    .filter(result => result.score > 0) // Only include results with matches
-    .sort((a, b) => b.score - a.score); // Sort by relevance (highest first)
+        )
+      );
+    } else if (searchField === 'text') {
+      filteredQuotes = filteredQuotes.filter(quote =>
+        searchTerms.some(term => quote.text.toLowerCase().includes(term))
+      );
+    } else if (searchField === 'author') {
+      filteredQuotes = filteredQuotes.filter(quote =>
+        searchTerms.some(term => quote.author.toLowerCase().includes(term))
+      );
+    } else if (searchField === 'category') {
+      filteredQuotes = filteredQuotes.filter(quote =>
+        searchTerms.some(term => quote.category.toLowerCase().includes(term))
+      );
+    }
+    
+    // Sort by ID
+    filteredQuotes.sort((a, b) => a.id - b.id);
     
     // Calculate pagination
-    const total = searchResults.length;
+    const total = filteredQuotes.length;
     const totalPages = Math.ceil(total / limit);
-    const startIndex = (page - 1) * limit;
-    const endIndex = startIndex + limit;
-    const paginatedResults = searchResults.slice(startIndex, endIndex);
+    const skip = (page - 1) * limit;
     
-    // Format response (remove score and matches from final response)
-    const formattedResults = paginatedResults.map(result => result.quote);
+    // Get paginated results
+    const paginatedQuotes = filteredQuotes.slice(skip, skip + limit);
+    
+    // Format results
+    const formattedResults = paginatedQuotes.map(quote => ({
+      id: quote.id,
+      text: quote.text,
+      author: quote.author,
+      category: quote.category,
+      createdAt: new Date().toISOString(),
+    }));
     
     return NextResponse.json({
       query: q,
@@ -135,6 +175,7 @@ export async function GET(request) {
         terms: searchTerms,
         totalMatches: total,
       },
+      source: "static",
     });
   } catch (error) {
     console.error("Error searching quotes:", error);

@@ -2,8 +2,9 @@
 	"info": {
 		"_postman_id": "quote-generator-api-collection",
 		"name": "Quote Generator API",
-		"description": "Complete API collection for the Quote Generator application",
-		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+		"description": "Complete API collection for the Quote Generator application. Includes all core API endpoints integrated with MongoDB. Updated to reflect current API structure after removal of additional features.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"version": "2.0.0"
 	},
 	"item": [
 		{
@@ -891,6 +892,639 @@
 				}
 			],
 			"description": "Endpoints for application statistics"
+		},
+		{
+			"name": "Migration",
+			"item": [
+				{
+					"name": "Check Migration Status",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/api/migrate/quotes",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"migrate",
+								"quotes"
+							]
+						},
+						"description": "Check the migration status of quotes from lib/quotes.js to MongoDB. Returns total quotes in file, total in database, missing count, and completion status."
+					},
+					"response": []
+				},
+				{
+					"name": "Migrate Quotes to MongoDB",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/api/migrate/quotes",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"migrate",
+								"quotes"
+							]
+						},
+						"description": "Migrate quotes from lib/quotes.js to MongoDB. This endpoint should be called once to import all quotes. It skips quotes that already exist and returns a summary of imported, skipped, and error counts."
+					},
+					"response": []
+				},
+				{
+					"name": "Check Database Migration Status",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/api/migrate/database",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"migrate",
+								"database"
+							]
+						},
+						"description": "Check the status of database migration. Returns information about all collections, document counts, and available fields."
+					},
+					"response": []
+				},
+				{
+					"name": "Migrate Database - Update Existing Documents",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/api/migrate/database",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"migrate",
+								"database"
+							]
+						},
+						"description": "Migrate database by updating existing User and Collection documents with new fields. Creates new collections and indexes. Returns verification of updated fields."
+					},
+					"response": []
+				},
+				{
+					"name": "Force Update All Documents",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/api/migrate/force-update",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"migrate",
+								"force-update"
+							]
+						},
+						"description": "Force update all User and Collection documents individually to ensure all new fields are visible in MongoDB Compass. This processes each document separately."
+					},
+					"response": []
+				},
+				{
+					"name": "Check Collection Index Status",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/api/migrate/fix-collection-index",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"migrate",
+								"fix-collection-index"
+							]
+						},
+						"description": "Check the current status of the Collection index. Returns information about all indexes, including whether the userId_1_name_1 index is sparse and unique as required."
+					},
+					"response": []
+				},
+				{
+					"name": "Fix Collection Index",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/api/migrate/fix-collection-index",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"migrate",
+								"fix-collection-index"
+							]
+						},
+						"description": "Fix the Collection index by dropping the old non-sparse unique index and creating a new sparse unique index. This resolves issues with creating collections when userId is null. The sparse index allows multiple collections with the same name when userId is null, while still enforcing uniqueness for user-specific collections."
+					},
+					"response": []
+				}
+			],
+			"description": "Endpoints for migrating quotes data from static file to MongoDB and database schema migrations"
+		},
+		{
+			"name": "Language",
+			"item": [
+				{
+					"name": "Translate Text",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"text\": \"The only way to do great work is to love what you do.\",\n  \"targetLang\": \"es\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/language/translate",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"language",
+								"translate"
+							]
+						},
+						"description": "Translate text from English to a target language. Supported languages: en, es, fr, de, hi, zh, te"
+					},
+					"response": []
+				},
+				{
+					"name": "Translate Text - Telugu",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"text\": \"Success is not final, failure is not fatal: it is the courage to continue that counts.\",\n  \"targetLang\": \"te\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/language/translate",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"language",
+								"translate"
+							]
+						},
+						"description": "Translate text to Telugu (te)"
+					},
+					"response": []
+				},
+				{
+					"name": "Translate Text - Hindi",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"text\": \"The future belongs to those who believe in the beauty of their dreams.\",\n  \"targetLang\": \"hi\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/language/translate",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"language",
+								"translate"
+							]
+						},
+						"description": "Translate text to Hindi (hi)"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Available Languages",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/api/language/languages",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"language",
+								"languages"
+							]
+						},
+						"description": "Get list of all available languages with their codes and native names"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Translations",
+					"item": [
+						{
+							"name": "Get Translations - English",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:3000/api/language/translations?lang=en",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"language",
+										"translations"
+									],
+									"query": [
+										{
+											"key": "lang",
+											"value": "en",
+											"description": "Language code (en, es, fr, de, hi, zh, te)"
+										}
+									]
+								},
+								"description": "Get all UI translations for English"
+							},
+							"response": []
+						},
+						{
+							"name": "Get Translations - Spanish",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:3000/api/language/translations?lang=es",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"language",
+										"translations"
+									],
+									"query": [
+										{
+											"key": "lang",
+											"value": "es"
+										}
+									]
+								},
+								"description": "Get all UI translations for Spanish"
+							},
+							"response": []
+						},
+						{
+							"name": "Get Translations - Telugu",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:3000/api/language/translations?lang=te",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"language",
+										"translations"
+									],
+									"query": [
+										{
+											"key": "lang",
+											"value": "te"
+										}
+									]
+								},
+								"description": "Get all UI translations for Telugu"
+							},
+							"response": []
+						}
+					],
+					"description": "Get UI translations for a specific language. Returns all translation keys and values for the requested language."
+				}
+			],
+			"description": "Endpoints for language translation and localization features"
+		},
+		{
+			"name": "Collections",
+			"item": [
+				{
+					"name": "Get All Collections",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/api/collections",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"collections"
+							]
+						},
+						"description": "Get all collections with their quotes"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Collection by Name",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/api/collections?name=My Favorite Quotes",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"collections"
+							],
+							"query": [
+								{
+									"key": "name",
+									"value": "My Favorite Quotes",
+									"description": "Collection name"
+								}
+							]
+						},
+						"description": "Get a specific collection by its name"
+					},
+					"response": []
+				},
+				{
+					"name": "Create Collection",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"My Favorite Quotes\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/collections",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"collections"
+							]
+						},
+						"description": "Create a new collection with a name"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Collection",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Updated Collection Name\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/collections?name=My Favorite Quotes",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"collections"
+							],
+							"query": [
+								{
+									"key": "name",
+									"value": "My Favorite Quotes",
+									"description": "Collection name (current name)"
+								}
+							]
+						},
+						"description": "Update a collection's name. The collection name is passed as a query parameter (?name=...), and the body contains the new name."
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Collection",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/api/collections?name=My Favorite Quotes",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"collections"
+							],
+							"query": [
+								{
+									"key": "name",
+									"value": "My Favorite Quotes",
+									"description": "Collection name"
+								}
+							]
+						},
+						"description": "Delete a collection and all its quotes by collection name (using query parameter)"
+					},
+					"response": []
+				},
+				{
+					"name": "Add Quote to Collection",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"text\": \"The only way to do great work is to love what you do.\",\n  \"author\": \"Steve Jobs\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/collections/quotes?name=My Favorite Quotes",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"collections",
+								"quotes"
+							],
+							"query": [
+								{
+									"key": "name",
+									"value": "My Favorite Quotes",
+									"description": "Collection name"
+								}
+							]
+						},
+						"description": "Add a quote to a collection by collection name (using query parameter)"
+					},
+					"response": []
+				},
+				{
+					"name": "Remove Quote from Collection",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"text\": \"The only way to do great work is to love what you do.\",\n  \"author\": \"Steve Jobs\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/collections/quotes?name=My Favorite Quotes",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"collections",
+								"quotes"
+							],
+							"query": [
+								{
+									"key": "name",
+									"value": "My Favorite Quotes",
+									"description": "Collection name"
+								}
+							]
+						},
+						"description": "Remove a quote from a collection using text and author (no ID required). The collection name is passed as a query parameter (?name=...), and the body contains the quote text and author to identify which quote to remove."
+					},
+					"response": []
+				}
+			],
+			"description": "Endpoints for managing quote collections (name-based, no ID required)"
 		}
 	],
 	"variable": [
@@ -898,6 +1532,12 @@
 			"key": "base_url",
 			"value": "http://localhost:3000",
 			"type": "string"
+		},
+		{
+			"key": "auth_session_cookie",
+			"value": "",
+			"type": "string",
+			"description": "Session cookie from login endpoint. After logging in via '/api/auth/login', copy the cookie value from the response headers (Set-Cookie: auth-session=...) or from Postman's Cookies tab. The value is a JSON string like: {\"id\":\"...\",\"name\":\"...\",\"username\":\"...\"}"
 		}
 	]
 }
